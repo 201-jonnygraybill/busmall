@@ -1,13 +1,15 @@
 'use strict';
 
+//Reference items from html document
 var firstPic = document.getElementById('firstpic');
 var middlePic = document.getElementById('middlepic');
 var lastPic = document.getElementById('lastpic');
 var results = document.getElementById('results');
 
-var allPics = [];
-var turnCount = 0;
+var allPics = []; //This empty array will store all the pictures
+var turnCount = 0; //This is the count of how many turns the pictures will display
 
+//This is the constructor function that will pass in parameters of each picture
 function VotingPics(name, extension) {
   this.filepath = `img/${name}${extension}`;
   this.extension = extension;
@@ -15,9 +17,11 @@ function VotingPics(name, extension) {
   this.views = 0;
   this.clicks = 0;
 
+  //This will push the pictures into the empty array
   allPics.push(this);
 }
 
+//All pictures created through the constructor function
 new VotingPics('bag','.jpg');
 new VotingPics('banana','.jpg');
 new VotingPics('bathroom','.jpg');
@@ -39,21 +43,23 @@ new VotingPics('usb','.gif');
 new VotingPics('water-can','.jpg');
 new VotingPics('wine-glass','.jpg');
 
+
+//This will select which pictures to display
 function selectPics() {
-  let currentPics = [];
+  let currentPics = []; //Used let because currentPics will change
   do {
     do {
-      var random = Math.floor(Math.random() * allPics.length);
+      var random = Math.floor(Math.random() * allPics.length); //Variable to select random photo from allPics array
       var pic = allPics[random];
     } while (previousPics.includes(pic) || currentPics.includes(pic));
-    currentPics.push(pic);
-  } while (currentPics.length < 3);
+    currentPics.push(pic); //Used to push variable pic into currentPics
+  } while (currentPics.length < 3); //Makes sure only three images are in circulation at a time
 
-  return currentPics;
+  return currentPics; //This whole chunk of code ensures that the current three images aren't the same as the last three images
 }
 
-var previousPics = [];
-turn();
+var previousPics = []; //Stores the previous three pictures to check against what new three pictures will be
+turn(); //Calls turn function
 
 function turn() {
   var currentPics = selectPics();
@@ -61,13 +67,14 @@ function turn() {
 
   for (var i = 0; i < 3; i++) {
     currentPics[i].views++;
-  }
+  } //Loopes through currentPics and adds +one to the views property of each
 
   previousPics = currentPics;
 
   turnCount++;
 }
 
+//Renders the pictures, and adds event listeners to each onclick
 function render(currentPics) {
   firstPic.src = currentPics[0].filepath;
   firstPic.alt = currentPics[0].name;
@@ -84,8 +91,9 @@ function render(currentPics) {
   firstPic.addEventListener('click', handleClick);
   middlePic.addEventListener('click', handleClick);
   lastPic.addEventListener('click', handleClick);
-}
+} 
 
+//Function to handle the onclick event from the pictures - ensures event can only happen 25 times before creating table function is called
 function handleClick(event) {
   if (turnCount < 26) {
     clickCountAdd(event.target.title);
@@ -96,8 +104,9 @@ function handleClick(event) {
   } else {
     return;
   }
-}
+} 
 
+//This adds a click to each picture
 function clickCountAdd(title) {
   for (var i = 0; i < allPics.length; i++) {
     if (allPics[i].name === title) {
@@ -108,21 +117,19 @@ function clickCountAdd(title) {
 }
 
 
-
-
-
+//This creates and appends the table that defines the views, clicks, and percentages of each image
 function createTable() {
   var row = document.createElement('tr');
   var headerTitle = document.createElement('td');
-  headerTitle.innerText = 'Pic Name';
+  headerTitle.innerText = 'Picture Name';
   row.appendChild(headerTitle);
 
   var headerClicksSum = document.createElement('td');
-  headerClicksSum.innerText = 'Clicks Total';
+  headerClicksSum.innerText = 'Clicks - Total';
   row.appendChild(headerClicksSum);
 
   var headerViewsSum = document.createElement('td');
-  headerViewsSum.innerText = 'Views Total';
+  headerViewsSum.innerText = 'Views - Total';
   row.appendChild(headerViewsSum);
 
   var headerClickedPercent = document.createElement('td');
@@ -131,6 +138,7 @@ function createTable() {
 
   results.appendChild(row);
 
+  //Loop through allPics length and create table rows and headings
   for (var i = 0; i < allPics.length; i++) {
     var imageRow = document.createElement('tr');
     var picName = document.createElement('td');
