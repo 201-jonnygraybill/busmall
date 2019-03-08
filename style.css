@@ -10,7 +10,8 @@ img {
   padding: 15px;
   margin-left: 20px;
   margin-right: 20px;
-  object-fit: cover;
+    object-fit: cover;
+
 }
 
 h1 {
@@ -56,4 +57,11 @@ tr:first-child td {
   font-weight: bold;
   font-size: 20px;
   padding: 20px;
+}
+
+canvas{
+
+  width:1200px !important;
+  height:1000px !important;
+
 }

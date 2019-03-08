@@ -1,13 +1,15 @@
 'use strict';
 
+var picChart;
+var chartDrawn = false;
+
+var allPics = []; //This empty array will store all the pictures
+var turnCount = 0; //This is the count of how many turns the pictures will display
+
 //Reference items from html document
 var firstPic = document.getElementById('firstpic');
 var middlePic = document.getElementById('middlepic');
 var lastPic = document.getElementById('lastpic');
-var results = document.getElementById('results');
-
-var allPics = []; //This empty array will store all the pictures
-var turnCount = 0; //This is the count of how many turns the pictures will display
 
 //This is the constructor function that will pass in parameters of each picture
 function VotingPics(name, extension) {
@@ -16,6 +18,7 @@ function VotingPics(name, extension) {
   this.name = name;
   this.views = 0;
   this.clicks = 0;
+  // this.percentage = 0 + '%';
 
   //This will push the pictures into the empty array
   allPics.push(this);
@@ -42,7 +45,6 @@ new VotingPics('unicorn','.jpg');
 new VotingPics('usb','.gif');
 new VotingPics('water-can','.jpg');
 new VotingPics('wine-glass','.jpg');
-
 
 //This will select which pictures to display
 function selectPics() {
@@ -91,7 +93,7 @@ function render(currentPics) {
   firstPic.addEventListener('click', handleClick);
   middlePic.addEventListener('click', handleClick);
   lastPic.addEventListener('click', handleClick);
-} 
+}
 
 //Function to handle the onclick event from the pictures - ensures event can only happen 25 times before creating table function is called
 function handleClick(event) {
@@ -99,12 +101,12 @@ function handleClick(event) {
     clickCountAdd(event.target.title);
     turn();
   } else if (turnCount === 26) {
-    createTable();
+    drawChart();
     turnCount++;
   } else {
     return;
   }
-} 
+}
 
 //This adds a click to each picture
 function clickCountAdd(title) {
@@ -114,49 +116,112 @@ function clickCountAdd(title) {
       break;
     }
   }
+  updateChartArrays();
 }
 
+var clicks = [];
+var titles = [];
+var views = [];
+// var percentage = [];
 
-//This creates and appends the table that defines the views, clicks, and percentages of each image
-function createTable() {
-  var row = document.createElement('tr');
-  var headerTitle = document.createElement('td');
-  headerTitle.innerText = 'Picture Name';
-  row.appendChild(headerTitle);
-
-  var headerClicksSum = document.createElement('td');
-  headerClicksSum.innerText = 'Clicks - Total';
-  row.appendChild(headerClicksSum);
-
-  var headerViewsSum = document.createElement('td');
-  headerViewsSum.innerText = 'Views - Total';
-  row.appendChild(headerViewsSum);
-
-  var headerClickedPercent = document.createElement('td');
-  headerClickedPercent.innerText = 'Clicked Percentage';
-  row.appendChild(headerClickedPercent);
-
-  results.appendChild(row);
-
-  //Loop through allPics length and create table rows and headings
+function updateChartArrays() {
   for (var i = 0; i < allPics.length; i++) {
-    var imageRow = document.createElement('tr');
-    var picName = document.createElement('td');
-    picName.innerText = allPics[i].name;
-    imageRow.appendChild(picName);
-
-    var clicksSumTotal = document.createElement('td');
-    clicksSumTotal.innerText = allPics[i].clicks;
-    imageRow.appendChild(clicksSumTotal);
-
-    var viewsSumTotal = document.createElement('td');
-    viewsSumTotal.innerText = allPics[i].views;
-    imageRow.appendChild(viewsSumTotal);
-
-    var clickedPercentageTotal = document.createElement('td');
-    clickedPercentageTotal.innerText = (Math.floor((allPics[i].clicks / allPics[i].views) * 100) + '%');
-    imageRow.appendChild(clickedPercentageTotal);
-
-    results.appendChild(imageRow);
+    titles[i] = allPics[i].name;
+    clicks[i] = allPics[i].clicks;
+    views[i] = allPics[i].views;
+    // percentage[i] = (allPics[i].clicks / allPics[i].views);
   }
 }
+
+var data = {
+  labels: titles,
+  backgroundColor: 'slatelightblue',
+  datasets: [
+    {
+      label: 'Votes',
+      data: clicks,
+      backgroundColor: [
+        'lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue']
+    },
+    // {
+    //   data: views,
+    //   label: 'Views',
+    //   backgroundColor: [
+    //     'lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue','lightslateblue']
+
+    // },
+    // {
+    //   data: percentage,
+    //   label: 'Percentage',
+    //   backgroundColor: [
+    //     'gray'
+    //   ]
+    // }
+  ]
+};
+
+function drawChart() {
+  var ctx = document.getElementById("myChart").getContext("2d");
+
+  picChart = new Chart(ctx, {
+    type: 'horizontalBar',
+    data: data,
+  });
+  chartDrawn = true;
+}
+
+document.getElementById('draw-chart').addEventListener('click', function(){
+  drawChart();
+});
+
+
+document.getElementById('images').addEventListener('click', function(event) {
+  clickCountAdd(event.target.id);
+  if (chartDrawn) {
+    picChart.update();
+  }
+});
+
+// //This creates and appends the table that defines the views, clicks, and percentages of each image
+// function createTable() {
+//   var row = document.createElement('tr');
+//   var headerTitle = document.createElement('td');
+//   headerTitle.innerText = 'Picture Name';
+//   row.appendChild(headerTitle);
+
+//   var headerClicksSum = document.createElement('td');
+//   headerClicksSum.innerText = 'Clicks - Total';
+//   row.appendChild(headerClicksSum);
+
+//   var headerViewsSum = document.createElement('td');
+//   headerViewsSum.innerText = 'Views - Total';
+//   row.appendChild(headerViewsSum);
+
+//   var headerClickedPercent = document.createElement('td');
+//   headerClickedPercent.innerText = 'Clicked Percentage';
+//   row.appendChild(headerClickedPercent);
+
+//   results.appendChild(row);
+
+//   //Loop through allPics length and create table rows and headings
+//   for (var i = 0; i < allPics.length; i++) {
+//     var imageRow = document.createElement('tr');
+//     var picName = document.createElement('td');
+//     picName.innerText = allPics[i].name;
+//     imageRow.appendChild(picName);
+
+//     var clicksSumTotal = document.createElement('td');
+//     clicksSumTotal.innerText = allPics[i].clicks;
+//     imageRow.appendChild(clicksSumTotal);
+
+//     var viewsSumTotal = document.createElement('td');
+//     viewsSumTotal.innerText = allPics[i].views;
+//     imageRow.appendChild(viewsSumTotal);
+
+//     var clickedPercentageTotal = document.createElement('td');
+//     clickedPercentageTotal.innerText = (Math.floor((allPics[i].clicks / allPics[i].views) * 100) + '%');
+//     imageRow.appendChild(clickedPercentageTotal);
+
+//     results.appendChild(imageRow);
+//   }
+// }
