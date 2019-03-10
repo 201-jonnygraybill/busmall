@@ -10,7 +10,7 @@ img {
   padding: 15px;
   margin-left: 20px;
   margin-right: 20px;
-    object-fit: cover;
+  object-fit: contain;
 
 }
 
