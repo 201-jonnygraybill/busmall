@@ -1,5 +1,11 @@
 'use strict';
 
+// JSON.stringify();  this turns some variables into a string
+// JSON.parse(); this turns the string back into the variable (whatever is was; object or array)
+// localStorage.getItem(); this retrieves stuff from locaStorage
+// localStorage.setItem(); stores stuff in local storage
+
+
 var picChart;
 var chartDrawn = false;
 
@@ -25,26 +31,26 @@ function VotingPics(name, extension) {
 }
 
 //All pictures created through the constructor function
-new VotingPics('bag','.jpg');
-new VotingPics('banana','.jpg');
-new VotingPics('bathroom','.jpg');
-new VotingPics('boots','.jpg');
-new VotingPics('breakfast','.jpg');
-new VotingPics('bubblegum','.jpg');
-new VotingPics('chair','.jpg');
-new VotingPics('cthulhu','.jpg');
-new VotingPics('dog-duck','.jpg');
-new VotingPics('dragon','.jpg');
-new VotingPics('pen','.jpg');
-new VotingPics('pet-sweep','.jpg');
-new VotingPics('scissors','.jpg');
-new VotingPics('shark','.jpg');
-new VotingPics('sweep','.png');
-new VotingPics('tauntaun','.jpg');
-new VotingPics('unicorn','.jpg');
-new VotingPics('usb','.gif');
-new VotingPics('water-can','.jpg');
-new VotingPics('wine-glass','.jpg');
+new VotingPics('bag', '.jpg');
+new VotingPics('banana', '.jpg');
+new VotingPics('bathroom', '.jpg');
+new VotingPics('boots', '.jpg');
+new VotingPics('breakfast', '.jpg');
+new VotingPics('bubblegum', '.jpg');
+new VotingPics('chair', '.jpg');
+new VotingPics('cthulhu', '.jpg');
+new VotingPics('dog-duck', '.jpg');
+new VotingPics('dragon', '.jpg');
+new VotingPics('pen', '.jpg');
+new VotingPics('pet-sweep', '.jpg');
+new VotingPics('scissors', '.jpg');
+new VotingPics('shark', '.jpg');
+new VotingPics('sweep', '.png');
+new VotingPics('tauntaun', '.jpg');
+new VotingPics('unicorn', '.jpg');
+new VotingPics('usb', '.gif');
+new VotingPics('water-can', '.jpg');
+new VotingPics('wine-glass', '.jpg');
 
 //This will select which pictures to display
 function selectPics() {
@@ -101,12 +107,26 @@ function handleClick(event) {
     clickCountAdd(event.target.title);
     turn();
   } else if (turnCount === 26) {
+    console.log('data ', typeof data);
+
+    var dataString = JSON.stringify(data);
+
+    console.log('type of dataString, ', typeof dataString);
+
+    var dataStringObject = JSON.parse(dataString);
+
+    console.log('type of dataString, ', typeof dataStringObject);
+
+    localStorage.setItem('ourThing', dataString);
     drawChart();
     turnCount++;
   } else {
     return;
   }
 }
+
+
+
 
 //This adds a click to each picture
 function clickCountAdd(title) {
@@ -133,6 +153,12 @@ function updateChartArrays() {
   }
 }
 
+
+
+
+
+
+
 var data = {
   labels: titles,
   backgroundColor: 'slatelightblue',
@@ -141,8 +167,14 @@ var data = {
       label: 'Votes',
       data: clicks,
       backgroundColor: [
-        'lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue','lightblue']
+        'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue']
     },
+
+
+
+
+
+
     // {
     //   data: views,
     //   label: 'Views',
@@ -160,6 +192,13 @@ var data = {
   ]
 };
 
+var retrievedData = localStorage.getItem('ourThing');
+
+var retrievedDataParsed = JSON.parse(retrievedData);
+
+console.log('retrievedDataParsed, ', retrievedDataParsed);
+
+
 function drawChart() {
   var ctx = document.getElementById("myChart").getContext("2d");
 
@@ -170,17 +209,21 @@ function drawChart() {
   chartDrawn = true;
 }
 
-document.getElementById('draw-chart').addEventListener('click', function(){
+
+document.getElementById('draw-chart').addEventListener('click', function () {
   drawChart();
 });
 
 
-document.getElementById('images').addEventListener('click', function(event) {
+document.getElementById('images').addEventListener('click', function (event) {
   clickCountAdd(event.target.id);
   if (chartDrawn) {
     picChart.update();
   }
 });
+
+
+
 
 // //This creates and appends the table that defines the views, clicks, and percentages of each image
 // function createTable() {
