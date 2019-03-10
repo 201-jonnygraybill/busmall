@@ -107,24 +107,21 @@ function handleClick(event) {
     clickCountAdd(event.target.title);
     turn();
   } else if (turnCount === 26) {
-    console.log('data ', typeof data);
 
     var dataString = JSON.stringify(data);
 
-    console.log('type of dataString, ', typeof dataString);
-
     var dataStringObject = JSON.parse(dataString);
 
-    console.log('type of dataString, ', typeof dataStringObject);
+    localStorage.setItem('storedData', dataString);
 
-    localStorage.setItem('ourThing', dataString);
+    localStorage.getItem('storedData', dataString);
+
     drawChart();
     turnCount++;
   } else {
     return;
   }
 }
-
 
 
 
@@ -153,12 +150,6 @@ function updateChartArrays() {
   }
 }
 
-
-
-
-
-
-
 var data = {
   labels: titles,
   backgroundColor: 'slatelightblue',
@@ -169,11 +160,6 @@ var data = {
       backgroundColor: [
         'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue']
     },
-
-
-
-
-
 
     // {
     //   data: views,
@@ -192,13 +178,6 @@ var data = {
   ]
 };
 
-var retrievedData = localStorage.getItem('ourThing');
-
-var retrievedDataParsed = JSON.parse(retrievedData);
-
-console.log('retrievedDataParsed, ', retrievedDataParsed);
-
-
 function drawChart() {
   var ctx = document.getElementById("myChart").getContext("2d");
 
@@ -209,10 +188,9 @@ function drawChart() {
   chartDrawn = true;
 }
 
-
-document.getElementById('draw-chart').addEventListener('click', function () {
-  drawChart();
-});
+// document.getElementById('draw-chart').addEventListener('click', function () {
+//   drawChart();
+// });
 
 
 document.getElementById('images').addEventListener('click', function (event) {
@@ -221,8 +199,6 @@ document.getElementById('images').addEventListener('click', function (event) {
     picChart.update();
   }
 });
-
-
 
 
 // //This creates and appends the table that defines the views, clicks, and percentages of each image
