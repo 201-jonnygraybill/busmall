@@ -5,17 +5,18 @@
 // localStorage.getItem(); this retrieves stuff from locaStorage
 // localStorage.setItem(); stores stuff in local storage
 
-
 var picChart;
 var chartDrawn = false;
 
 var allPics = []; //This empty array will store all the pictures
 var turnCount = 0; //This is the count of how many turns the pictures will display
 
+
 //Reference items from html document
 var firstPic = document.getElementById('firstpic');
 var middlePic = document.getElementById('middlepic');
 var lastPic = document.getElementById('lastpic');
+var results = document.getElementById('results');
 
 //This is the constructor function that will pass in parameters of each picture
 function VotingPics(name, extension) {
@@ -31,6 +32,7 @@ function VotingPics(name, extension) {
 }
 
 //All pictures created through the constructor function
+
 new VotingPics('bag', '.jpg');
 new VotingPics('banana', '.jpg');
 new VotingPics('bathroom', '.jpg');
@@ -75,10 +77,8 @@ function turn() {
 
   for (var i = 0; i < 3; i++) {
     currentPics[i].views++;
-  } //Loopes through currentPics and adds +one to the views property of each
-
+  } //Loops through currentPics and adds +one to the views property of each
   previousPics = currentPics;
-
   turnCount++;
 }
 
@@ -107,23 +107,14 @@ function handleClick(event) {
     clickCountAdd(event.target.title);
     turn();
   } else if (turnCount === 26) {
-
-    var dataString = JSON.stringify(data);
-
-    var dataStringObject = JSON.parse(dataString);
-
-    localStorage.setItem('storedData', dataString);
-
-    localStorage.getItem('storedData', dataString);
-
     drawChart();
+    createTable();
+    keepClicks();
     turnCount++;
   } else {
     return;
   }
 }
-
-
 
 //This adds a click to each picture
 function clickCountAdd(title) {
@@ -178,6 +169,30 @@ var data = {
   ]
 };
 
+go();
+
+function go() {
+  grabClicks();
+  if (allPics.length === 0) {
+    turn();
+  } else {
+    turn();
+    updateChartArrays();
+  }
+}
+
+function keepClicks() {
+  var clicksString = JSON.stringify(allPics);
+  localStorage.setItem('allPics', clicksString);
+}
+
+function grabClicks() {
+  var retrievedData = localStorage.getItem('allPics');
+  if (retrievedData !== null) {
+    allPics = JSON.parse(retrievedData);
+  }
+}
+
 function drawChart() {
   var ctx = document.getElementById("myChart").getContext("2d");
 
@@ -188,9 +203,9 @@ function drawChart() {
   chartDrawn = true;
 }
 
-// document.getElementById('draw-chart').addEventListener('click', function () {
-//   drawChart();
-// });
+document.getElementById('draw-chart').addEventListener('click', function () {
+  drawChart();
+});
 
 
 document.getElementById('images').addEventListener('click', function (event) {
@@ -200,47 +215,50 @@ document.getElementById('images').addEventListener('click', function (event) {
   }
 });
 
+if (localStorage !== null) {
+  window.addEventListener('load', drawChart());
+}
 
-// //This creates and appends the table that defines the views, clicks, and percentages of each image
-// function createTable() {
-//   var row = document.createElement('tr');
-//   var headerTitle = document.createElement('td');
-//   headerTitle.innerText = 'Picture Name';
-//   row.appendChild(headerTitle);
+//This creates and appends the table that defines the views, clicks, and percentages of each image
+function createTable() {
+  var row = document.createElement('tr');
+  var headerTitle = document.createElement('td');
+  headerTitle.innerText = 'Picture Name';
+  row.appendChild(headerTitle);
 
-//   var headerClicksSum = document.createElement('td');
-//   headerClicksSum.innerText = 'Clicks - Total';
-//   row.appendChild(headerClicksSum);
+  var headerClicksSum = document.createElement('td');
+  headerClicksSum.innerText = 'Clicks - Total';
+  row.appendChild(headerClicksSum);
 
-//   var headerViewsSum = document.createElement('td');
-//   headerViewsSum.innerText = 'Views - Total';
-//   row.appendChild(headerViewsSum);
+  var headerViewsSum = document.createElement('td');
+  headerViewsSum.innerText = 'Views - Total';
+  row.appendChild(headerViewsSum);
 
-//   var headerClickedPercent = document.createElement('td');
-//   headerClickedPercent.innerText = 'Clicked Percentage';
-//   row.appendChild(headerClickedPercent);
+  var headerClickedPercent = document.createElement('td');
+  headerClickedPercent.innerText = 'Clicked Percentage';
+  row.appendChild(headerClickedPercent);
 
-//   results.appendChild(row);
+  results.appendChild(row);
 
-//   //Loop through allPics length and create table rows and headings
-//   for (var i = 0; i < allPics.length; i++) {
-//     var imageRow = document.createElement('tr');
-//     var picName = document.createElement('td');
-//     picName.innerText = allPics[i].name;
-//     imageRow.appendChild(picName);
+  //Loop through allPics length and create table rows and headings
+  for (var i = 0; i < allPics.length; i++) {
+    var imageRow = document.createElement('tr');
+    var picName = document.createElement('td');
+    picName.innerText = allPics[i].name;
+    imageRow.appendChild(picName);
 
-//     var clicksSumTotal = document.createElement('td');
-//     clicksSumTotal.innerText = allPics[i].clicks;
-//     imageRow.appendChild(clicksSumTotal);
+    var clicksSumTotal = document.createElement('td');
+    clicksSumTotal.innerText = allPics[i].clicks;
+    imageRow.appendChild(clicksSumTotal);
 
-//     var viewsSumTotal = document.createElement('td');
-//     viewsSumTotal.innerText = allPics[i].views;
-//     imageRow.appendChild(viewsSumTotal);
+    var viewsSumTotal = document.createElement('td');
+    viewsSumTotal.innerText = allPics[i].views;
+    imageRow.appendChild(viewsSumTotal);
 
-//     var clickedPercentageTotal = document.createElement('td');
-//     clickedPercentageTotal.innerText = (Math.floor((allPics[i].clicks / allPics[i].views) * 100) + '%');
-//     imageRow.appendChild(clickedPercentageTotal);
+    var clickedPercentageTotal = document.createElement('td');
+    clickedPercentageTotal.innerText = (Math.floor((allPics[i].clicks / allPics[i].views) * 100) + '%');
+    imageRow.appendChild(clickedPercentageTotal);
 
-//     results.appendChild(imageRow);
-//   }
-// }
+    results.appendChild(imageRow);
+  }
+}
